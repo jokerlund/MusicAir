@@ -20,20 +20,22 @@
 	ctx.fillText("Hello World",10,50);
 
 	ctx.beginPath();
-    ctx.moveTo(200, 120);
+    ctx.moveTo(150, 90);
 
     // line 1
     ctx.lineTo(300, 260);
 
     // quadratic curve
-    ctx.quadraticCurveTo(330, 300, 350, 220);
+    ctx.quadraticCurveTo(330, 300, 350, 250);
 
     // bezier curve
-    ctx.bezierCurveTo(390, 60, 400, 300, 500, 250);
+    ctx.bezierCurveTo(390, 60, 400, 400, 500, 250);
 
     // line 2
-    ctx.lineTo(600, 190);
-
+    ctx.lineTo(550, 150);
+    
+    ctx.bezierCurveTo(600,-300,500,800,1200,267);
+    
     ctx.lineWidth = 5;
     
     var grad= ctx.createLinearGradient(0, 0, 0, 438);
@@ -46,12 +48,12 @@
 
     
     ctx.beginPath();
-    ctx.moveTo(25,400);
+    ctx.moveTo(50,400);
     
     //line 1
     ctx.lineTo(130,300);
     
-    ctx.bezierCurveTo(390, 60, 400, 300, 500, 250);
+    ctx.bezierCurveTo(390, -400, 300, 700, 1000, 235);
 
     
 
