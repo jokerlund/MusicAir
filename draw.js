@@ -18,24 +18,30 @@ ctx.lineWidth = 5;
 ctx.translate(width/2, height/2);
 
 
-var dshort = new Audio("dshort.mp3");
-
-var noteA = new Audio("along.mp3");
-var noteB = new Audio("blong.mp3");
-var noteF = new Audio("fsharplong.mp3");
 var noteD = new Audio("dlong.mp3");
 var noteE = new Audio("elong.mp3");
-var noteA2 = new Audio("a2.mp3");
-var noteB2 = new Audio("b2.mp3");
-var noteF2 = new Audio("fsharp2.mp3");
-var noteD2 = new Audio("d2.mp3");
-var noteE2 = new Audio("e2.mp3");
+var noteF = new Audio("fsharplong.mp3");
+var noteA = new Audio("along.mp3");
+var noteB = new Audio("blong.mp3");
+var noteD2 = new Audio("d2long.mp3");
+var noteE2 = new Audio("e2long.mp3");
+var noteF2 = new Audio("fsharp2long.mp3");
+var noteA2 = new Audio("a2long.mp3");
+var noteB2 = new Audio("b2long.mp3");
+var noteD3 = new Audio("d3long.mp3");
+var noteE3 = new Audio("e3long.mp3");
+var noteF3 = new Audio("fsharp3long.mp3");
+var noteA3 = new Audio("a3long.mp3");
+var noteB3 = new Audio("b3long.mp3");
+
 
 
 
 
 function draw(frame) {
     var a, b;
+	
+	interval = 50; //number of pixels each note interval is
 
     for (var id in after) {
         b = before[id],
@@ -64,31 +70,37 @@ function draw(frame) {
         //console.log("Y " + position);
 		//console.log("Frame # " + frame.id%100.0);
 		if (frame.id%1.0 == 0) {
-			if (position >= 0 && position < 100) {
+			if (position >= 0 && position < interval) {
 				noteD.play();
 				console.log("Playing Note D");
 			}
-			if (position >= 100 && position < 200) {
+			if (position >= interval && position < 2 *interval) {
 				noteE.play();
 				console.log("Playing Note E");
 			}
-			if (position >= 200 && position < 300) {
+			if (position >= 2*interval && position < 3*interval) {
 				noteF.play();
 				console.log("Playing Note F#");
 			}
-			if (position >= 300 && position < 400) {
+			if (position >= 3*interval && position < 4*interval) {
 				noteA.play();
 				console.log("Playing Note A");
 			}
-			if (position >= 400 && position < 500) {
+			if (position >= 4*interval && position < 5*interval) {
 				noteB.play();
 				console.log("Playing Note B");
 			}
-			if (position >= 500 && position < 600) noteD2.play();
-			if (position >= 600 && position < 700) noteE2.play();
-			if (position >= 700 && position < 800) noteF2.play();
-			if (position >= 800 && position < 900) noteA2.play();
-			if (position >= 900 && position <= 1000) noteB2.play();
+			if (position >= 5*interval && position < 6*interval) noteD2.play();
+			if (position >= 6*interval && position < 7*interval) noteE2.play();
+			if (position >= 7*interval && position < 8*interval) noteF2.play();
+			if (position >= 8*interval && position < 9*interval) noteA2.play();
+			if (position >= 9*interval && position <= 10*interval) noteB2.play();
+			
+			if (position >= 11*interval && position < 12*interval) noteD3.play();
+			if (position >= 12*interval && position < 13*interval) noteE3.play();
+			if (position >= 13*interval && position < 14*interval) noteF3.play();
+			if (position >= 14*interval && position < 15*interval) noteA3.play();
+			if (position >= 15*interval && position <= 16*interval) noteB3.play();
 		}
         	             
         ctx.stroke();
