@@ -8,8 +8,11 @@ var controllerOptions = { enableGestures: true },
         .attr('height', height).node(),
     ctx = canvas.getContext('2d'),
     before = {},
-    after = {},
-    color = d3.scale.category20c();
+    after = {};
+
+    //color = d3.scale.category20c();
+
+
 
 ctx.lineWidth = 5;
 ctx.translate(width/2, height/2);
@@ -29,6 +32,8 @@ var noteD2 = new Audio("d2.mp3");
 var noteE2 = new Audio("e2.mp3");
 
 
+
+
 function draw(frame) {
     var a, b;
 
@@ -36,11 +41,25 @@ function draw(frame) {
         b = before[id],
         a = after[id];
         if (!b) continue;
-
-        ctx.strokeStyle = color(id);
+		
+		var grad= ctx.createLinearGradient(0, -500, 0, 0);
+		grad.addColorStop(0, 'red');
+    	grad.addColorStop(1/6, 'orange');
+    	grad.addColorStop(2/6, 'yellow');
+    	grad.addColorStop(3/6, 'green')
+    	grad.addColorStop(4/6, 'aqua');
+    	grad.addColorStop(5/6, 'blue');
+    	grad.addColorStop(1, 'purple');
+		
+        ctx.strokeStyle = grad;	
+		
+        //ctx.strokeStyle = color(id);
+        ctx.beginPath();
         ctx.moveTo(b.tipPosition.x, -b.tipPosition.y);
         ctx.lineTo(a.tipPosition.x, -a.tipPosition.y);
         
+        console.log(-b.tipPosition.y);
+        console.log(-a.tipPosition.y);
 		position = a.tipPosition.y
         //console.log("Y " + position);
 		//console.log("Frame # " + frame.id%100.0);
@@ -71,9 +90,9 @@ function draw(frame) {
 			if (position >= 800 && position < 900) noteA2.play();
 			if (position >= 900 && position <= 1000) noteB2.play();
 		}
-                      
+        	             
         ctx.stroke();
-        ctx.beginPath();
+        
     }
 
     before = after;
