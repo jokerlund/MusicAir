@@ -34,61 +34,28 @@ var noteF3 = new Audio("fsharp3long.mp3");
 var noteA3 = new Audio("a3long.mp3");
 var noteB3 = new Audio("b3long.mp3");
 
+var interval = 50; //number of pixels each note interval is
 
-
-
-
-function draw(frame) {
-    var a, b;
-	
-	interval = 50; //number of pixels each note interval is
-
-    for (var id in after) {
-        b = before[id],
-        a = after[id];
-        if (!b) continue;
-		
-		var grad= ctx.createLinearGradient(0, -500, 0, 0);
-		grad.addColorStop(0, 'red');
-    	grad.addColorStop(1/6, 'orange');
-    	grad.addColorStop(2/6, 'yellow');
-    	grad.addColorStop(3/6, 'green')
-    	grad.addColorStop(4/6, 'aqua');
-    	grad.addColorStop(5/6, 'blue');
-    	grad.addColorStop(1, 'purple');
-		
-        ctx.strokeStyle = grad;	
-		
-        //ctx.strokeStyle = color(id);
-        ctx.beginPath();
-        ctx.moveTo(b.tipPosition.x, -b.tipPosition.y);
-        ctx.lineTo(a.tipPosition.x, -a.tipPosition.y);
-        
-        console.log(-b.tipPosition.y);
-        console.log(-a.tipPosition.y);
-		position = a.tipPosition.y
-        //console.log("Y " + position);
-		//console.log("Frame # " + frame.id%100.0);
-		if (frame.id%1.0 == 0) {
-			if (position >= 0 && position < interval) {
+function playNote(position){
+	if (position >= 0 && position < interval) {
 				noteD.play();
-				console.log("Playing Note D");
+				//console.log("Playing Note D");
 			}
 			if (position >= interval && position < 2 *interval) {
 				noteE.play();
-				console.log("Playing Note E");
+				//console.log("Playing Note E");
 			}
 			if (position >= 2*interval && position < 3*interval) {
 				noteF.play();
-				console.log("Playing Note F#");
+				//console.log("Playing Note F#");
 			}
 			if (position >= 3*interval && position < 4*interval) {
 				noteA.play();
-				console.log("Playing Note A");
+				//console.log("Playing Note A");
 			}
 			if (position >= 4*interval && position < 5*interval) {
 				noteB.play();
-				console.log("Playing Note B");
+				//console.log("Playing Note B");
 			}
 			if (position >= 5*interval && position < 6*interval) noteD2.play();
 			if (position >= 6*interval && position < 7*interval) noteE2.play();
@@ -101,13 +68,72 @@ function draw(frame) {
 			if (position >= 13*interval && position < 14*interval) noteF3.play();
 			if (position >= 14*interval && position < 15*interval) noteA3.play();
 			if (position >= 15*interval && position <= 16*interval) noteB3.play();
-		}
-        	             
-        ctx.stroke();
-        
-    }
+		
+	
+}
+
+
+
+function draw(frame) {
+    var a, b;
+
+    for (var id in after) {
+
+        b = before[id], //before and after are hashes of ids and frame pointables (?) only ever contains one pointable though
+        a = after[id];
+        if (!b) continue;
+		currentX = a.tipPosition.x;
+		currentY = a.tipPosition.y;
+		
+		
+		
+
+		var grad= ctx.createLinearGradient(0, -500, 0, 0);
+		grad.addColorStop(0, 'red');
+    	grad.addColorStop(1/6, 'orange');
+    	grad.addColorStop(2/6, 'yellow');
+    	grad.addColorStop(3/6, 'green');
+    	grad.addColorStop(4/6, 'aqua');
+    	grad.addColorStop(5/6, 'blue');
+    	grad.addColorStop(1, 'purple');
+		
+		ctx.strokeStyle = grad;	
+		
+		var gestures = frame.gestures;
+		if (gestures.length > 0) {
+			for (var i = 0; i < gestures.length; i++) {
+            	var gesture = gestures[i];
+				console.log("TYPE: " + gesture.type);
+				if (gesture.type == "screenTap"){
+					console.log("SCREEN TAP");
+					ctx.beginPath();
+					ctx.arc(currentX,-currentY,8,0,2*Math.PI);
+					ctx.stroke();
+					playNote(currentY);
+				}
+				else if (gesture.type == "swipe"){ //swipe gesture 
+	
+					//ctx.strokeStyle = color(id);
+					ctx.beginPath();
+					ctx.moveTo(b.tipPosition.x, -b.tipPosition.y);
+					ctx.lineTo(currentX, -currentY);
+					
+					//console.log(-b.tipPosition.y);
+					//console.log(-a.tipPosition.y);
+					position = currentY;
+					//console.log("Y " + position);
+					//console.log("Frame # " + frame.id%100.0);
+					playNote(position);				 
+					ctx.stroke();
+				}
+			}
+			console.log(gesture);
+		
+    	}
+	}
 
     before = after;
+	
 }
 
 
