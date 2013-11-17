@@ -100,37 +100,25 @@ function draw(frame) {
 		ctx.strokeStyle = grad;	
 		
 		var gestures = frame.gestures;
+		//var star = new Image();
+		//star.src = "orange.gif";
+		
 		if (gestures.length > 0) {
 			for (var i = 0; i < gestures.length; i++) {
             	var gesture = gestures[i];
 				console.log("TYPE: " + gesture.type);
 				if (gesture.type == "screenTap"){
-					console.log("SCREEN TAP");
+					console.log("SCREEN TAP: " + currentY);
 					ctx.beginPath();
 					//ctx.arc(currentX,-currentY,8,0,2*Math.PI);
-					
-					//drawing star
-					length = 15;
-					ctx.rotate((Math.PI * 1/10));
-					// make a point, 5 times
-					for (var i = 5; i--;) {
-						// draw line up
-						ctx.lineTo(0, length);
-						// move origin to current same location as pen
-						ctx.translate(0, length);
-						// rotate the drawing board
-						ctx.rotate((Math.PI * 2 / 10));
-						// draw line down
-						ctx.lineTo(0, -length);
-						// again, move origin to pen...
-						ctx.translate(0, -length);
-						// ...and rotate, ready for next arm
-						ctx.rotate(-(Math.PI * 6 / 10));
-					}
-					// last line to connect things up
-					ctx.lineTo(0, length);
-					ctx.closePath();
-
+					var star = new Image();
+					if (currentY >= 0 && currentY <100) star.src = "purple.gif";
+					if (currentY >= 100 && currentY <200) star.src = "aqua.gif";
+					if (currentY >= 200 && currentY <300) star.src = "green.gif";
+					if (currentY >= 300 && currentY <400) star.src = "yellow.gif";
+					if (currentY >= 400 && currentY <500) star.src = "orange.gif";
+					if (currentY >= 500 && currentY <600) star.src = "pink.gif";
+					ctx.drawImage(star, currentX, -currentY);
 					ctx.stroke();
 					playNote(currentY);
 				}
