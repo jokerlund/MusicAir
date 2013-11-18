@@ -8,7 +8,11 @@ var controllerOptions = { enableGestures: true },
         .attr('height', height).node(),
     ctx = canvas.getContext('2d'),
     before = {},
-    after = {};
+    after = {},
+	lFade = new Date(),
+    lBox = new Date(),
+    lClear = new Date();
+
 
     //color = d3.scale.category20c();
 
@@ -76,7 +80,7 @@ function playNote(position){
 
 function draw(frame) {
     var a, b;
-
+	console.log("FRAME " + frame);
     for (var id in after) {
 
         b = before[id], //before and after are hashes of ids and frame pointables (?) only ever contains one pointable though
@@ -84,20 +88,8 @@ function draw(frame) {
         if (!b) continue;
 		currentX = a.tipPosition.x;
 		currentY = a.tipPosition.y;
-		
-		
-		
 
-		var grad= ctx.createLinearGradient(0, -500, 0, 0);
-		grad.addColorStop(0, 'red');
-    	grad.addColorStop(1/6, 'orange');
-    	grad.addColorStop(2/6, 'yellow');
-    	grad.addColorStop(3/6, 'green');
-    	grad.addColorStop(4/6, 'aqua');
-    	grad.addColorStop(5/6, 'blue');
-    	grad.addColorStop(1, 'purple');
 		
-		ctx.strokeStyle = grad;	
 		
 		var gestures = frame.gestures;
 		//var star = new Image();
@@ -123,28 +115,107 @@ function draw(frame) {
 					playNote(currentY);
 				}
 				else if (gesture.type == "swipe"){ //swipe gesture 
+				
+					drawLine(b.tipPosition.x, -b.tipPosition.y, currentX, -currentY);
 	
-					//ctx.strokeStyle = color(id);
-					ctx.beginPath();
-					ctx.moveTo(b.tipPosition.x, -b.tipPosition.y);
-					ctx.lineTo(currentX, -currentY);
+					////ctx.strokeStyle = color(id);
+					//ctx.beginPath();
+					//ctx.moveTo(b.tipPosition.x, -b.tipPosition.y);
+					//ctx.lineTo(currentX, -currentY);
 					
-					//console.log(-b.tipPosition.y);
-					//console.log(-a.tipPosition.y);
+					////console.log(-b.tipPosition.y);
+					////console.log(-a.tipPosition.y);
 					position = currentY;
-					//console.log("Y " + position);
-					//console.log("Frame # " + frame.id%100.0);
+					////console.log("Y " + position);
+					////console.log("Frame # " + frame.id%100.0);
 					playNote(position);				 
-					ctx.stroke();
+					//ctx.stroke();
 				}
 			}
 			console.log(gesture);
-		
     	}
 	}
-
     before = after;
+}
+
+function drawLine(x1,y1,x2,y2){ //old, old, new, new
+   console.log("DRAW LINE *****");
+   var grad= ctx.createLinearGradient(0, -500, 0, 0);
+		grad.addColorStop(0, 'red');
+    	grad.addColorStop(1/6, 'orange');
+    	grad.addColorStop(2/6, 'yellow');
+    	grad.addColorStop(3/6, 'green');
+    	grad.addColorStop(4/6, 'aqua');
+    	grad.addColorStop(5/6, 'blue');
+    	grad.addColorStop(1, 'purple');
+    
+    	var now = new Date();
+    	//console.log(now);
+
+        ctx.strokeStyle = grad;
+        //ctx.fillRect(200*Math.random(), 200*Math.random(), 300*Math.random(), 300*Math.random());
+        ctx.beginPath();
+		ctx.moveTo(x1, y1);
+		ctx.lineTo(x2, y2);
+		
+        //ctx.moveTo(200, 120);
+
+        // line 1
+        //ctx.lineTo(c, d);
+        //ctx.quadraticCurveTo(330, 300, 350, 220);
+        // bezier curve
+        //ctx.bezierCurveTo(390, 60, 400, 300, 500, 250);
+        // line 2
+        //ctx.lineTo(600, 190);
+        ctx.lineWidth = 5;
+        ctx.stroke();
+        lBox = now;
+        //fadeLine();
+    
+}
+
+function fadeLine(){
+	console.log("FADEEEEE");
+	var now = new Date();
 	
+	 var grad2= ctx.createLinearGradient(0, -500, 0, 0);
+		grad2.addColorStop(0, 'rgba(0,0,0,.25)');
+
+    
+    var grad3= ctx.createLinearGradient(0, -500, 0, 0);
+		grad3.addColorStop(0, 'rgba(0,0,0,0.1)');
+        //grad3.addColorStop(1,'black');
+	if (now - lFade > 20){
+        console.log("LFADE " + lFade);
+        //ctx.fillStyle = "rgba(255,255,255,0.025)"
+        //ctx.fillRect(0, 0, 500, 500);
+        ctx.strokeStyle = grad2;
+        
+        ctx.beginPath();
+        //ctx.moveTo(200, 120);
+        //ctx.lineTo(c, d);
+        //ctx.quadraticCurveTo(330, 300, 350, 220);
+        //ctx.bezierCurveTo(390, 60, 400, 300, 500, 250);
+        //ctx.lineTo(600, 190);
+        //ctx.lineWidth = 15;
+        ctx.stroke();
+        lFade = now;
+    }
+    if (now - lClear > 800){
+        console.log("LCLEAR " + lClear);
+        ctx.strokeStyle = grad3;
+		ctx.beginPath();
+		//ctx.moveTo(200, 120);
+        //ctx.lineTo(c, d);
+        //ctx.quadraticCurveTo(330, 300, 350, 220);
+        //ctx.bezierCurveTo(390, 60, 400, 300, 500, 250);
+        //ctx.lineTo(600, 190);
+
+        ctx.lineWidth = 20;
+        ctx.stroke();
+        lClear = now;
+    }
+	setTimeout(function(){fadeLine()}, 1000);
 }
 
 
