@@ -79,6 +79,15 @@ function playNote(position){
 
 
 function draw(frame) {
+	var grad= ctx.createLinearGradient(0, -500, 0, 0);
+		grad.addColorStop(0, 'red');
+    	grad.addColorStop(1/6, 'orange');
+    	grad.addColorStop(2/6, 'yellow');
+    	grad.addColorStop(3/6, 'green');
+    	grad.addColorStop(4/6, 'aqua');
+    	grad.addColorStop(5/6, 'blue');
+    	grad.addColorStop(1, 'purple');
+	
     var a, b;
 	console.log("FRAME " + frame);
     for (var id in after) {
@@ -117,7 +126,7 @@ function draw(frame) {
 				else if (gesture.type == "swipe"){ //swipe gesture 
 				
 					drawLine(b.tipPosition.x, -b.tipPosition.y, currentX, -currentY);
-	
+					//ctx.strokeStyle = grad;
 					////ctx.strokeStyle = color(id);
 					//ctx.beginPath();
 					//ctx.moveTo(b.tipPosition.x, -b.tipPosition.y);
@@ -129,7 +138,7 @@ function draw(frame) {
 					////console.log("Y " + position);
 					////console.log("Frame # " + frame.id%100.0);
 					playNote(position);				 
-					//ctx.stroke();
+					ctx.stroke();
 				}
 			}
 			console.log(gesture);
@@ -171,10 +180,33 @@ function drawLine(x1,y1,x2,y2){ //old, old, new, new
         ctx.stroke();
         lBox = now;
         //fadeLine();
-    
+    	setTimeout(function(){blackLine(x1,y1,x2,y2)}, 2000);
 }
 
-function fadeLine(){
+function blackLine(x1,y1,x2,y2){
+	var grad= ctx.createLinearGradient(0, -500, 0, 0);
+		grad.addColorStop(0, 'black');
+		ctx.strokeStyle = grad;
+        //ctx.fillRect(200*Math.random(), 200*Math.random(), 300*Math.random(), 300*Math.random());
+        ctx.beginPath();
+		ctx.moveTo(x1, y1);
+		ctx.lineTo(x2, y2);
+		
+        //ctx.moveTo(200, 120);
+
+        // line 1
+        //ctx.lineTo(c, d);
+        //ctx.quadraticCurveTo(330, 300, 350, 220);
+        // bezier curve
+        //ctx.bezierCurveTo(390, 60, 400, 300, 500, 250);
+        // line 2
+        //ctx.lineTo(600, 190);
+        ctx.lineWidth = 5;
+        ctx.stroke();
+	
+}
+
+function fadeLine(x1,y1,x2,y2){
 	console.log("FADEEEEE");
 	var now = new Date();
 	
