@@ -77,6 +77,73 @@ function playNote(position){
 }
 
 
+var minSize = 0;
+var maxSize = 10;
+var id = 0;
+
+start = function(context, anchor){
+
+	var size = (1 - anchor.distance)*(this.maxSize - this.minSize) + this.minSize;
+	
+	context.beginPath();
+	context.arc(anchor.x, anchor.y, size, 0, 2 * Math.PI, false);
+	context.fill();
+	
+	return [anchor.x-size, anchor.x+size, anchor.y-size, anchor.y+size];
+}
+
+//drawNice = function(context, startAnchor, endAnchor){
+drawNice = function(context, x1,y1, x2,y2, dis1, dir1, vel1, dis2, dir2, vel2){
+	context.strokeStyle="#FF0000";
+	console.log("DistanceBrush.draw");
+	console.log(context);
+	//console.log(startAnchor);
+	//console.log(endAnchor);
+	var startSize = (1 - dis1)*(maxSize - minSize) + minSize;
+	var endSize = (1 - dis2)*(maxSize - minSize) + minSize;
+	
+	var startVector = new Leap.Vector([x1, y1, 0]);
+	var endVector = new Leap.Vector([x2, y2, 0]);
+	
+	var line = endVector.minus(startVector);
+	var ortho = new Leap.Vector([line.y, -line.x, 0]);
+	ortho = ortho.normalized();
+	var startOrtho = ortho.multiply(startSize);
+	ortho = ortho.multiply(endSize);
+	
+	var start = endVector.plus(ortho);
+	context.beginPath();
+	
+	var pos = start;
+	context.moveTo(pos.x, pos.y);
+	
+	pos = endVector.minus(ortho);
+	context.lineTo(pos.x, pos.y);
+	
+	pos = startVector.minus(startOrtho);
+	context.lineTo(pos.x, pos.y);
+	
+	pos = startVector.plus(startOrtho);
+	context.lineTo(pos.x, pos.y);
+	
+	pos = start;
+	context.lineTo(pos.x, pos.y);
+	
+	context.fill();
+	
+	context.beginPath();
+	context.arc(endVector.x, endVector.y, endSize, 0, 2 * Math.PI, false);
+	context.fill();
+	
+	var boundary1 = [x1-startSize, x1+startSize, y1-startSize, y1+startSize];
+	var boundary2 = [x2-endSize, x2+endSize, y2-endSize, y2+endSize];
+	
+	return [boundary1, boundary2];
+	
+};
+
+
+
 
 function draw(frame) {
 	var grad= ctx.createLinearGradient(0, -500, 0, 0);
@@ -97,8 +164,6 @@ function draw(frame) {
         if (!b) continue;
 		currentX = a.tipPosition.x;
 		currentY = a.tipPosition.y;
-
-		
 		
 		var gestures = frame.gestures;
 		//var star = new Image();
@@ -126,19 +191,13 @@ function draw(frame) {
 				else if (gesture.type == "swipe"){ //swipe gesture 
 				
 					drawLine(b.tipPosition.x, -b.tipPosition.y, currentX, -currentY);
-					//ctx.strokeStyle = grad;
-					////ctx.strokeStyle = color(id);
-					//ctx.beginPath();
-					//ctx.moveTo(b.tipPosition.x, -b.tipPosition.y);
-					//ctx.lineTo(currentX, -currentY);
-					
-					////console.log(-b.tipPosition.y);
-					////console.log(-a.tipPosition.y);
+					//drawNice(ctx, b.tipPosition.x, b.tipPosition.y, currentX, currentY, 1, gesture.direction, gesture.speed, 1, gesture.direction, gesture.speed);
+					//start(ctx,
+					//SwipeGesture sg = SwipeGesture(gesture);
+					console.log("SPEED " + gesture.speed);
+					console.log("DIR " + gesture.direction);
 					position = currentY;
-					////console.log("Y " + position);
-					////console.log("Frame # " + frame.id%100.0);
 					playNote(position);				 
-					ctx.stroke();
 				}
 			}
 			console.log(gesture);
@@ -157,104 +216,37 @@ function drawLine(x1,y1,x2,y2){ //old, old, new, new
     	grad.addColorStop(4/6, 'aqua');
     	grad.addColorStop(5/6, 'blue');
     	grad.addColorStop(1, 'purple');
-    
-    	var now = new Date();
-    	//console.log(now);
 
-        ctx.strokeStyle = grad;
-        //ctx.fillRect(200*Math.random(), 200*Math.random(), 300*Math.random(), 300*Math.random());
-        ctx.beginPath();
-		ctx.moveTo(x1, y1);
-		ctx.lineTo(x2, y2);
-		
-        //ctx.moveTo(200, 120);
+	ctx.strokeStyle = grad;
+	ctx.beginPath();
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.lineWidth = 5;
+	ctx.stroke();
 
-        // line 1
-        //ctx.lineTo(c, d);
-        //ctx.quadraticCurveTo(330, 300, 350, 220);
-        // bezier curve
-        //ctx.bezierCurveTo(390, 60, 400, 300, 500, 250);
-        // line 2
-        //ctx.lineTo(600, 190);
-        ctx.lineWidth = 5;
-        ctx.stroke();
-        lBox = now;
-        //fadeLine();
-    	setTimeout(function(){blackLine(x1,y1,x2,y2)}, 2000);
+	setTimeout(function(){blackLine(x1,y1,x2,y2)}, 2000);
 }
 
 function blackLine(x1,y1,x2,y2){
 	var grad= ctx.createLinearGradient(0, -500, 0, 0);
-		grad.addColorStop(0, 'black');
-		ctx.strokeStyle = grad;
-        //ctx.fillRect(200*Math.random(), 200*Math.random(), 300*Math.random(), 300*Math.random());
-        ctx.beginPath();
-		ctx.moveTo(x1, y1);
-		ctx.lineTo(x2, y2);
-		
-        //ctx.moveTo(200, 120);
-
-        // line 1
-        //ctx.lineTo(c, d);
-        //ctx.quadraticCurveTo(330, 300, 350, 220);
-        // bezier curve
-        //ctx.bezierCurveTo(390, 60, 400, 300, 500, 250);
-        // line 2
-        //ctx.lineTo(600, 190);
-        ctx.lineWidth = 5;
-        ctx.stroke();
-	
+	grad.addColorStop(0, 'black');
+	ctx.strokeStyle = grad;
+	ctx.beginPath();
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.lineWidth = 7;
+	ctx.stroke();
 }
 
-function fadeLine(x1,y1,x2,y2){
-	console.log("FADEEEEE");
-	var now = new Date();
-	
-	 var grad2= ctx.createLinearGradient(0, -500, 0, 0);
-		grad2.addColorStop(0, 'rgba(0,0,0,.25)');
 
-    
-    var grad3= ctx.createLinearGradient(0, -500, 0, 0);
-		grad3.addColorStop(0, 'rgba(0,0,0,0.1)');
-        //grad3.addColorStop(1,'black');
-	if (now - lFade > 20){
-        console.log("LFADE " + lFade);
-        //ctx.fillStyle = "rgba(255,255,255,0.025)"
-        //ctx.fillRect(0, 0, 500, 500);
-        ctx.strokeStyle = grad2;
-        
-        ctx.beginPath();
-        //ctx.moveTo(200, 120);
-        //ctx.lineTo(c, d);
-        //ctx.quadraticCurveTo(330, 300, 350, 220);
-        //ctx.bezierCurveTo(390, 60, 400, 300, 500, 250);
-        //ctx.lineTo(600, 190);
-        //ctx.lineWidth = 15;
-        ctx.stroke();
-        lFade = now;
-    }
-    if (now - lClear > 800){
-        console.log("LCLEAR " + lClear);
-        ctx.strokeStyle = grad3;
-		ctx.beginPath();
-		//ctx.moveTo(200, 120);
-        //ctx.lineTo(c, d);
-        //ctx.quadraticCurveTo(330, 300, 350, 220);
-        //ctx.bezierCurveTo(390, 60, 400, 300, 500, 250);
-        //ctx.lineTo(600, 190);
-
-        ctx.lineWidth = 20;
-        ctx.stroke();
-        lClear = now;
-    }
-	setTimeout(function(){fadeLine()}, 1000);
-}
 
 
 Leap.loop(controllerOptions, function(frame, done) {
     after = {};
-    for (var i = 0; i < frame.pointables.length; i++) {
+	
+    for (var i = 0; i < frame.pointables.length; i++) {	
         after[frame.pointables[i].id] = frame.pointables[i];
+		console.log("pointables " + frame.pointables[i]);
     }
     draw(frame);
     done();
