@@ -185,8 +185,21 @@ function draw(frame) {
 					if (currentY >= 400 && currentY <500) star.src = "orange.gif";
 					if (currentY >= 500 && currentY <600) star.src = "pink.gif";
 					ctx.drawImage(star, currentX, -currentY);
+					
 					ctx.stroke();
 					playNote(currentY);
+					
+					//redrawing a black image on top of the stars
+					//but for some reason this does not cover all the stars :(
+					setTimeout(function(){
+					ctx.beginPath();
+					star.src = "black.gif";
+					ctx.drawImage(star,currentX,-currentY);
+					console.log("clear image");
+					ctx.stroke();
+					}, 2000);
+										
+					//setTimeout(function(){clearImg(ctx, currentX,currentY)}, 1000);
 				}
 				else if (gesture.type == "swipe"){ //swipe gesture 
 				
@@ -205,6 +218,7 @@ function draw(frame) {
 	}
     before = after;
 }
+
 
 function drawLine(x1,y1,x2,y2){ //old, old, new, new
    console.log("DRAW LINE *****");
