@@ -1340,6 +1340,8 @@ var Pointable = exports.Pointable = function(data) {
    * @member Pointable.prototype.tipVelocity {Vector}
    */
   this.tipVelocity = new Vector(data.tipVelocity);
+  
+   this.touchDistance = data.touchDistance;
 }
 
 /**

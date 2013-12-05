@@ -8,17 +8,14 @@ var controllerOptions = { enableGestures: true },
         .attr('height', height).node(),
     ctx = canvas.getContext('2d'),
     before = {},
-    after = {},
-	lFade = new Date(),
-    lBox = new Date(),
-    lClear = new Date();
+    after = {};
 
 
     //color = d3.scale.category20c();
 
 
 
-ctx.lineWidth = 5;
+//ctx.lineWidth = 5;
 ctx.translate(width/2, height/2);
 
 
@@ -76,74 +73,30 @@ function playNote(position){
 	
 }
 
+bminSize = 0;
+bmaxSize = 15;
 
-var minSize = 0;
-var maxSize = 10;
-var id = 0;
-
-start = function(context, anchor){
-
-	var size = (1 - anchor.distance)*(this.maxSize - this.minSize) + this.minSize;
+bubbledraw = function(context, distance, x, y){
+	var grad= ctx.createLinearGradient(0, -500, 0, 0);
+		grad.addColorStop(0, 'red');
+    	grad.addColorStop(1/6, 'orange');
+    	grad.addColorStop(2/6, 'yellow');
+    	grad.addColorStop(3/6, 'green');
+    	grad.addColorStop(4/6, 'aqua');
+    	grad.addColorStop(5/6, 'blue');
+    	grad.addColorStop(1, 'purple');
 	
+	context.fillStyle=grad;
+	var endSize = (1 - distance)*(bmaxSize - bminSize) + bminSize;
+
 	context.beginPath();
-	context.arc(anchor.x, anchor.y, size, 0, 2 * Math.PI, false);
+	context.arc(x, y, endSize, 0, 2 * Math.PI, false);
 	context.fill();
 	
-	return [anchor.x-size, anchor.x+size, anchor.y-size, anchor.y+size];
-}
-
-//drawNice = function(context, startAnchor, endAnchor){
-drawNice = function(context, x1,y1, x2,y2, dis1, dir1, vel1, dis2, dir2, vel2){
-	context.strokeStyle="#FF0000";
-	console.log("DistanceBrush.draw");
-	console.log(context);
-	//console.log(startAnchor);
-	//console.log(endAnchor);
-	var startSize = (1 - dis1)*(maxSize - minSize) + minSize;
-	var endSize = (1 - dis2)*(maxSize - minSize) + minSize;
+	var boundary = [x-endSize, x+endSize, y-endSize, y+endSize];
 	
-	var startVector = new Leap.Vector([x1, y1, 0]);
-	var endVector = new Leap.Vector([x2, y2, 0]);
-	
-	var line = endVector.minus(startVector);
-	var ortho = new Leap.Vector([line.y, -line.x, 0]);
-	ortho = ortho.normalized();
-	var startOrtho = ortho.multiply(startSize);
-	ortho = ortho.multiply(endSize);
-	
-	var start = endVector.plus(ortho);
-	context.beginPath();
-	
-	var pos = start;
-	context.moveTo(pos.x, pos.y);
-	
-	pos = endVector.minus(ortho);
-	context.lineTo(pos.x, pos.y);
-	
-	pos = startVector.minus(startOrtho);
-	context.lineTo(pos.x, pos.y);
-	
-	pos = startVector.plus(startOrtho);
-	context.lineTo(pos.x, pos.y);
-	
-	pos = start;
-	context.lineTo(pos.x, pos.y);
-	
-	context.fill();
-	
-	context.beginPath();
-	context.arc(endVector.x, endVector.y, endSize, 0, 2 * Math.PI, false);
-	context.fill();
-	
-	var boundary1 = [x1-startSize, x1+startSize, y1-startSize, y1+startSize];
-	var boundary2 = [x2-endSize, x2+endSize, y2-endSize, y2+endSize];
-	
-	return [boundary1, boundary2];
-	
+	return [boundary];
 };
-
-
-
 
 function draw(frame) {
 	var grad= ctx.createLinearGradient(0, -500, 0, 0);
@@ -156,7 +109,6 @@ function draw(frame) {
     	grad.addColorStop(1, 'purple');
 	
     var a, b;
-	console.log("FRAME " + frame);
     for (var id in after) {
 
         b = before[id], //before and after are hashes of ids and frame pointables (?) only ever contains one pointable though
@@ -164,6 +116,7 @@ function draw(frame) {
         if (!b) continue;
 		currentX = a.tipPosition.x;
 		currentY = a.tipPosition.y;
+		currentZ = a.touchDistance; 
 		
 		var gestures = frame.gestures;
 		//var star = new Image();
@@ -202,13 +155,11 @@ function draw(frame) {
 					//setTimeout(function(){clearImg(ctx, currentX,currentY)}, 1000);
 				}
 				else if (gesture.type == "swipe"){ //swipe gesture 
-				
-					drawLine(b.tipPosition.x, -b.tipPosition.y, currentX, -currentY);
-					//drawNice(ctx, b.tipPosition.x, b.tipPosition.y, currentX, currentY, 1, gesture.direction, gesture.speed, 1, gesture.direction, gesture.speed);
-					//start(ctx,
-					//SwipeGesture sg = SwipeGesture(gesture);
-					console.log("SPEED " + gesture.speed);
-					console.log("DIR " + gesture.direction);
+					//drawLine(b.tipPosition.x, -b.tipPosition.y, currentX, -currentY);
+	
+					//console.log(1/currentZ);
+					bubbledraw(ctx, currentZ, currentX, -currentY);
+					
 					position = currentY;
 					playNote(position);				 
 				}
@@ -260,7 +211,6 @@ Leap.loop(controllerOptions, function(frame, done) {
 	
     for (var i = 0; i < frame.pointables.length; i++) {	
         after[frame.pointables[i].id] = frame.pointables[i];
-		console.log("pointables " + frame.pointables[i]);
     }
     draw(frame);
     done();
