@@ -18,7 +18,7 @@ var controllerOptions = { enableGestures: true },
 
 
 //ctx.lineWidth = 5;
-ctx.translate(width/4, .75*height);
+ctx.translate(width/2, .75*height);
 
 
 var noteD = new Audio("dlong.mp3");
@@ -154,7 +154,7 @@ bubbleFade = function(context, distance, x, y){
 	context.beginPath();
 	context.arc(x, y, endSize, 0, 2 * Math.PI, false);
 	context.fill();
-	setTimeout(function(){bubbleFade2(context, distance, x, y)}, 70);
+	//setTimeout(function(){bubbleFade2(context, distance, x, y)}, 70);
 };
 
 bubbleFade2 = function(context, distance, x, y){
