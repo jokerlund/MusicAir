@@ -1,7 +1,9 @@
 // Setup Leap loop with frame callback function
 var controllerOptions = { enableGestures: true },
-    width = 1000,
-    height = 1000,
+    //width = 1000,
+    //height = 1000,
+	width = window.innerWidth,
+	height = window.innerHeight,
     canvas = d3.select('div#container')
         .append('canvas')
         .attr('width', width)
@@ -16,7 +18,7 @@ var controllerOptions = { enableGestures: true },
 
 
 //ctx.lineWidth = 5;
-ctx.translate(width/2, height/2);
+ctx.translate(width/4, .75*height);
 
 
 var noteD = new Audio("dlong.mp3");
@@ -35,43 +37,90 @@ var noteF3 = new Audio("fsharp3long.mp3");
 var noteA3 = new Audio("a3long.mp3");
 var noteB3 = new Audio("b3long.mp3");
 
+
+
+
 var interval = 50; //number of pixels each note interval is
 
-function playNote(position){
+
+function setVolume(note, distance){
+	if (distance >= .5){
+		note.volume = 1;
+	} else if (distance < .5 && distance > -.5){
+		note.volume = .5;
+	} else if (distance <= -.5){
+		note.volume = .1;
+	}
+}
+
+function playNote(position, distance){
 	if (position >= 0 && position < interval) {
+				setVolume(noteD, distance);
 				noteD.play();
 				//console.log("Playing Note D");
 			}
-			if (position >= interval && position < 2 *interval) {
+			else if (position >= interval && position < 2 *interval) {
+				setVolume(noteE, distance);
 				noteE.play();
 				//console.log("Playing Note E");
 			}
-			if (position >= 2*interval && position < 3*interval) {
+			else if (position >= 2*interval && position < 3*interval) {
+				setVolume(noteF, distance);
 				noteF.play();
 				//console.log("Playing Note F#");
 			}
-			if (position >= 3*interval && position < 4*interval) {
+			else if (position >= 3*interval && position < 4*interval) {
+				setVolume(noteA, distance);
 				noteA.play();
 				//console.log("Playing Note A");
 			}
-			if (position >= 4*interval && position < 5*interval) {
+			else if (position >= 4*interval && position < 5*interval) {
+				setVolume(noteB, distance);
 				noteB.play();
 				//console.log("Playing Note B");
 			}
-			if (position >= 5*interval && position < 6*interval) noteD2.play();
-			if (position >= 6*interval && position < 7*interval) noteE2.play();
-			if (position >= 7*interval && position < 8*interval) noteF2.play();
-			if (position >= 8*interval && position < 9*interval) noteA2.play();
-			if (position >= 9*interval && position <= 10*interval) noteB2.play();
+			else if (position >= 5*interval && position < 6*interval) {
+				setVolume(noteD2, distance);
+				noteD2.play();
+			}
+			else if (position >= 6*interval && position < 7*interval) {
+				setVolume(noteE2, distance);
+				noteE2.play();
+			}
+			else if (position >= 7*interval && position < 8*interval) {
+				setVolume(noteF2, distance);
+				noteF2.play();
+			}
+			else if (position >= 8*interval && position < 9*interval){
+				setVolume(noteA2, distance);
+				noteA2.play();
+			}
+			else if (position >= 9*interval && position <= 10*interval){
+				setVolume(noteB2, distance);
+				noteB2.play();
+			}
 			
-			if (position >= 11*interval && position < 12*interval) noteD3.play();
-			if (position >= 12*interval && position < 13*interval) noteE3.play();
-			if (position >= 13*interval && position < 14*interval) noteF3.play();
-			if (position >= 14*interval && position < 15*interval) noteA3.play();
-			if (position >= 15*interval && position <= 16*interval) noteB3.play();
-		
-	
-}
+			else if (position >= 11*interval && position < 12*interval){
+				setVolume(noteD3, distance);
+				noteD3.play();
+			}
+			else if (position >= 12*interval && position < 13*interval){
+				setVolume(noteE3, distance);
+				noteE3.play();
+			}
+			else if (position >= 13*interval && position < 14*interval){
+				setVolume(noteF3, distance);
+				noteF3.play();
+			}
+			else if (position >= 14*interval && position < 15*interval){
+				setVolume(noteA3, distance);
+				noteA3.play();
+			}
+			else if (position >= 15*interval && position <= 16*interval){
+				setVolume(noteB3, distance);
+				noteB3.play();
+			}
+	}
 
 bminSize = 0;
 bmaxSize = 15;
@@ -93,10 +142,54 @@ bubbledraw = function(context, distance, x, y){
 	context.arc(x, y, endSize, 0, 2 * Math.PI, false);
 	context.fill();
 	
-	var boundary = [x-endSize, x+endSize, y-endSize, y+endSize];
-	
-	return [boundary];
+	setTimeout(function(){bubbleFade(context, distance, x, y)}, 1000); 
 };
+
+
+bubbleFade = function(context, distance, x, y){
+	
+	context.fillStyle="rgba(0,0,0,0.1)";
+	var endSize = (1 - distance)*(bmaxSize - bminSize) + bminSize;
+
+	context.beginPath();
+	context.arc(x, y, endSize, 0, 2 * Math.PI, false);
+	context.fill();
+	setTimeout(function(){bubbleFade2(context, distance, x, y)}, 70);
+};
+
+bubbleFade2 = function(context, distance, x, y){
+	
+	context.fillStyle="rgba(0,0,0,.5)";
+	var endSize = (1 - distance)*(bmaxSize - bminSize) + bminSize;
+
+	context.beginPath();
+	context.arc(x, y, endSize, 0, 2 * Math.PI, false);
+	context.fill();
+	setTimeout(function(){bubbleFade3(context, distance, x, y)}, 70);
+};
+
+bubbleFade3 = function(context, distance, x, y){
+	
+	context.fillStyle="rgba(0,0,0,.8)";
+	var endSize = (1 - distance)*(bmaxSize - bminSize) + bminSize;
+
+	context.beginPath();
+	context.arc(x, y, endSize, 0, 2 * Math.PI, false);
+	context.fill();
+	setTimeout(function(){bubbleFade4(context, distance, x, y)}, 70);
+};
+
+bubbleFade4 = function(context, distance, x, y){
+	
+	context.fillStyle="rgba(0,0,0,1)";
+	var endSize = (1 - distance)*(bmaxSize - bminSize) + bminSize;
+
+	context.beginPath();
+	context.arc(x, y, endSize, 0, 2 * Math.PI, false);
+	context.fill();
+	
+};
+
 
 function draw(frame) {
 	var grad= ctx.createLinearGradient(0, -500, 0, 0);
@@ -154,14 +247,14 @@ function draw(frame) {
 										
 					//setTimeout(function(){clearImg(ctx, currentX,currentY)}, 1000);
 				}
-				else if (gesture.type == "swipe"){ //swipe gesture 
+				else if (gesture.type == "swipe" || gesture.type =="circle"){ //swipe gesture 
 					//drawLine(b.tipPosition.x, -b.tipPosition.y, currentX, -currentY);
 	
 					//console.log(1/currentZ);
-					bubbledraw(ctx, currentZ, currentX, -currentY);
+					bubbledraw(ctx, currentZ, currentX*2, -currentY*2);
 					
 					position = currentY;
-					playNote(position);				 
+					playNote(position, currentZ);				 
 				}
 			}
 			console.log(gesture);
