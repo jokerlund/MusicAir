@@ -230,23 +230,43 @@ function draw(frame) {
 					if (currentY >= 300 && currentY <400) star.src = "yellow.gif";
 					if (currentY >= 400 && currentY <500) star.src = "orange.gif";
 					if (currentY >= 500 && currentY <600) star.src = "pink.gif";
-					ctx.drawImage(star, currentX, -currentY);
+					
+					// for safari:
+					// ctx.drawImage(star, currentX, -currentY);
+					// for chrome&safari:
+					//ctx.translate(ctx.width / 2, ctx.height / 2);
+					
+					//var degree = Math.floor(Math.random()*180);
+					//ctx.rotate(degree*Math.PI/180);
+					
+					star.onload = function() {
+					    ctx.drawImage(star, currentX, -currentY);
+					}
 					
 					ctx.stroke();
 					playNote(currentY);
 					
+					var localCurX = currentX;
+					var localCurY = currentY;
+					
 					//redrawing a black image on top of the stars
 					//but for some reason this does not cover all the stars :(
+					console.log("run!");
 					setTimeout(function(){
-					ctx.beginPath();
-					star.src = "black.gif";
-					ctx.drawImage(star,currentX,-currentY);
-					console.log("clear image");
-					ctx.stroke();
+						var black = new Image();
+						ctx.beginPath();
+						black.src = "black.gif";
+						// for safari:
+						// ctx.drawImage(black,currentX,-currentY);
+						// for chrome&safari:
+						black.onload = function() {
+					 	   ctx.drawImage(black, localCurX, -localCurY);
+						}
+						console.log("clear image");
+						ctx.stroke();
 					}, 2000);
-										
-					//setTimeout(function(){clearImg(ctx, currentX,currentY)}, 1000);
-				}
+					
+					}
 				else if (gesture.type == "swipe" || gesture.type =="circle"){ //swipe gesture 
 					//drawLine(b.tipPosition.x, -b.tipPosition.y, currentX, -currentY);
 	
