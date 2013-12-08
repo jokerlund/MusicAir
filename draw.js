@@ -221,8 +221,8 @@ function draw(frame) {
 			for (var i = 0; i < gestures.length; i++) {
             	var gesture = gestures[i];
 				console.log("TYPE: " + gesture.type);
-				if (gesture.type == "screenTap"){
-					console.log("SCREEN TAP: " + currentY);
+				if (gesture.type == "screenTap"||gesture.type == "keyTap"){
+					console.log("TAP: " + currentY);
 					ctx.beginPath();
 					//ctx.arc(currentX,-currentY,8,0,2*Math.PI);
 					var star = new Image();
@@ -260,19 +260,21 @@ function draw(frame) {
 					setTimeout(function(){
 						var black = new Image();
 						ctx.beginPath();
-						black.src = "black.gif";
+						
+						
+						black.src = "black-1.gif";
 						// for safari:
 						// ctx.drawImage(black,currentX,-currentY);
 						// for chrome&safari:
 						// ctx.rotate(degree*Math.PI/180);
 						black.onload = function() {
-					 	   ctx.drawImage(black, localCurX, -localCurY);
+							ctx.drawImage(black, localCurX, -localCurY);
 						}
 						console.log("clear image");
 						ctx.stroke();
 						//ctx.rotate(-degree*Math.PI/180);
 						//ctx.restore();
-					}, 2000);
+					}, 1000);
 					
 					}
 				else if (gesture.type == "swipe" || gesture.type =="circle"){ //swipe gesture 
