@@ -215,6 +215,8 @@ function draw(frame) {
 		//var star = new Image();
 		//star.src = "orange.gif";
 		
+		//ctx.save();
+		
 		if (gestures.length > 0) {
 			for (var i = 0; i < gestures.length; i++) {
             	var gesture = gestures[i];
@@ -244,6 +246,9 @@ function draw(frame) {
 					}
 					
 					ctx.stroke();
+					//ctx.restore();
+					//ctx.rotate(-degree*Math.PI/180);
+					
 					playNote(currentY);
 					
 					var localCurX = currentX;
@@ -259,11 +264,14 @@ function draw(frame) {
 						// for safari:
 						// ctx.drawImage(black,currentX,-currentY);
 						// for chrome&safari:
+						// ctx.rotate(degree*Math.PI/180);
 						black.onload = function() {
 					 	   ctx.drawImage(black, localCurX, -localCurY);
 						}
 						console.log("clear image");
 						ctx.stroke();
+						//ctx.rotate(-degree*Math.PI/180);
+						//ctx.restore();
 					}, 2000);
 					
 					}
