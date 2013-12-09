@@ -1,3 +1,33 @@
+//auto full screen video
+var elem = document.getElementById("introvideo");
+elem.play();
+/* do this if you just want the video to disappear instead of fadeout
+*/
+elem.addEventListener('ended', function() {
+   $("#introvideo").fadeOut();
+}, false);
+/* fadeout
+elem.addEventListener('loadeddata', function() {
+   setTimeout(function(){$("#introvideo").fadeOut(1000);}, 5000);
+}, false);
+*/
+/*
+elem.onended = function() {
+	alert("haha");
+	elem.parentNode.removeChild(this);
+}
+*/
+/*
+if (elem.requestFullscreen) {
+  elem.requestFullscreen();
+} else if (elem.mozRequestFullScreen) {
+  elem.mozRequestFullScreen();
+} else if (elem.webkitRequestFullscreen) {
+  elem.webkitRequestFullscreen();
+}
+*/
+
+
 // Setup Leap loop with frame callback function
 var controllerOptions = { enableGestures: true },
     //width = 1000,
