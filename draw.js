@@ -1,4 +1,16 @@
+/* MusicAir
+Irene Kwok, Charlene Lee, Johanna Okerlund, Yuki Zhu
+CS320 Tangible User Interfaces fall 2013
+Wellesley College
+
+Must have working leap motion controller connected to computer
+to run this application
+
+this class controls the sounds and displays 
+based on data from each frame from the leap motion controller */
+
 //auto full screen video
+// play tutorial at beginning
 var elem = document.getElementById("introvideo");
 elem.play();
 /* do this if you just want the video to disappear instead of fadeout
@@ -6,26 +18,6 @@ elem.play();
 elem.addEventListener('ended', function() {
    $("#introvideo").fadeOut();
 }, false);
-/* fadeout
-elem.addEventListener('loadeddata', function() {
-   setTimeout(function(){$("#introvideo").fadeOut(1000);}, 5000);
-}, false);
-*/
-/*
-elem.onended = function() {
-	alert("haha");
-	elem.parentNode.removeChild(this);
-}
-*/
-/*
-if (elem.requestFullscreen) {
-  elem.requestFullscreen();
-} else if (elem.mozRequestFullScreen) {
-  elem.mozRequestFullScreen();
-} else if (elem.webkitRequestFullscreen) {
-  elem.webkitRequestFullscreen();
-}
-*/
 
 
 // Setup Leap loop with frame callback function
@@ -72,7 +64,8 @@ var noteB3 = new Audio("b3long.mp3");
 
 var interval = 50; //number of pixels each note interval is
 
-
+// set volume of note to be played based on gesture's depth into the 
+// leap motion field of view
 function setVolume(note, distance){
 	if (distance >= .5){
 		note.volume = 1;
@@ -83,6 +76,7 @@ function setVolume(note, distance){
 	}
 }
 
+// play note corresponding to given height of gesture
 function playNote(position, distance){
 	if (position >= 0 && position < interval) {
 				setVolume(noteD, distance);
@@ -152,9 +146,13 @@ function playNote(position, distance){
 			}
 	}
 
+
+// size of min and max bubbles
 bminSize = 0;
 bmaxSize = 15;
 
+// Each line is drawn of multiple circles. 
+// Each circle calls a series of delayed functions that make it fade. 
 bubbledraw = function(context, distance, x, y){
 	var grad= ctx.createLinearGradient(0, -500, 0, 0);
 		grad.addColorStop(0, 'red');
@@ -175,7 +173,7 @@ bubbledraw = function(context, distance, x, y){
 	setTimeout(function(){bubbleFade(context, distance, x, y)}, 1000); 
 };
 
-
+// fade function 1
 bubbleFade = function(context, distance, x, y){
 	
 	context.fillStyle="rgba(0,0,0,0.1)";
@@ -184,9 +182,10 @@ bubbleFade = function(context, distance, x, y){
 	context.beginPath();
 	context.arc(x, y, endSize, 0, 2 * Math.PI, false);
 	context.fill();
-	//setTimeout(function(){bubbleFade2(context, distance, x, y)}, 70);
+	setTimeout(function(){bubbleFade2(context, distance, x, y)}, 70);
 };
 
+// fade function 2
 bubbleFade2 = function(context, distance, x, y){
 	
 	context.fillStyle="rgba(0,0,0,.5)";
@@ -198,6 +197,7 @@ bubbleFade2 = function(context, distance, x, y){
 	setTimeout(function(){bubbleFade3(context, distance, x, y)}, 70);
 };
 
+// fade function 3
 bubbleFade3 = function(context, distance, x, y){
 	
 	context.fillStyle="rgba(0,0,0,.8)";
@@ -209,6 +209,7 @@ bubbleFade3 = function(context, distance, x, y){
 	setTimeout(function(){bubbleFade4(context, distance, x, y)}, 70);
 };
 
+// fade function 4
 bubbleFade4 = function(context, distance, x, y){
 	
 	context.fillStyle="rgba(0,0,0,1)";
@@ -220,7 +221,7 @@ bubbleFade4 = function(context, distance, x, y){
 	
 };
 
-
+// This is called for every new frame of data recieved from Leap motion
 function draw(frame) {
 	var grad= ctx.createLinearGradient(0, -500, 0, 0);
 		grad.addColorStop(0, 'red');
@@ -251,6 +252,7 @@ function draw(frame) {
 			for (var i = 0; i < gestures.length; i++) {
             	var gesture = gestures[i];
 				console.log("TYPE: " + gesture.type);
+				// behavior for screen tap- play one note; display picture
 				if (gesture.type == "screenTap"||gesture.type == "keyTap"){
 					console.log("TAP: " + currentY);
 					ctx.beginPath();
@@ -307,6 +309,7 @@ function draw(frame) {
 					}, 1000);
 					
 					}
+				// behavior for swipe- draw circle, play note(s), fade out. 
 				else if (gesture.type == "swipe" || gesture.type =="circle"){ //swipe gesture 
 					//drawLine(b.tipPosition.x, -b.tipPosition.y, currentX, -currentY);
 	
@@ -323,7 +326,7 @@ function draw(frame) {
     before = after;
 }
 
-
+// not using this- was using to draw boxy line rather than dynamic circles. 
 function drawLine(x1,y1,x2,y2){ //old, old, new, new
    console.log("DRAW LINE *****");
    var grad= ctx.createLinearGradient(0, -500, 0, 0);
@@ -358,7 +361,7 @@ function blackLine(x1,y1,x2,y2){
 
 
 
-
+// loop function- gets frame data from leap motion. 
 Leap.loop(controllerOptions, function(frame, done) {
     after = {};
 	
