@@ -9,7 +9,7 @@ to run this application
 this class controls the sounds and displays 
 based on data from each frame from the leap motion controller */
 
-//auto full screen video
+// auto full screen video
 // play tutorial at beginning
 var elem = document.getElementById("introvideo");
 elem.play();
@@ -34,15 +34,13 @@ var controllerOptions = { enableGestures: true },
     before = {},
     after = {};
 
+	//this randomly assigns a color to each line (in milestone 1)
+    //color = d3.scale.category20c(); 
 
-    //color = d3.scale.category20c();
-
-
-
-//ctx.lineWidth = 5;
 ctx.translate(width/2, .75*height);
 
 
+//variables corresponding to different notes
 var noteD = new Audio("dlong.mp3");
 var noteE = new Audio("elong.mp3");
 var noteF = new Audio("fsharplong.mp3");
@@ -58,7 +56,6 @@ var noteE3 = new Audio("e3long.mp3");
 var noteF3 = new Audio("fsharp3long.mp3");
 var noteA3 = new Audio("a3long.mp3");
 var noteB3 = new Audio("b3long.mp3");
-
 
 
 
@@ -152,7 +149,7 @@ bminSize = 0;
 bmaxSize = 15;
 
 // Each line is drawn of multiple circles. 
-// Each circle calls a series of delayed functions that make it fade. 
+// Each circle calls a series of delayed functions that make it fade
 bubbledraw = function(context, distance, x, y){
 	var grad= ctx.createLinearGradient(0, -500, 0, 0);
 		grad.addColorStop(0, 'red');
@@ -173,7 +170,10 @@ bubbledraw = function(context, distance, x, y){
 	setTimeout(function(){bubbleFade(context, distance, x, y)}, 1000); 
 };
 
-// fade function 1
+
+// different fade functions draw bubbles of increasing transparency
+// to create the effect of gradual fading
+// fade function 1 
 bubbleFade = function(context, distance, x, y){
 	
 	context.fillStyle="rgba(0,0,0,0.1)";
@@ -223,6 +223,8 @@ bubbleFade4 = function(context, distance, x, y){
 
 // This is called for every new frame of data recieved from Leap motion
 function draw(frame) {
+	
+	//gradient colors that corresponds to height
 	var grad= ctx.createLinearGradient(0, -500, 0, 0);
 		grad.addColorStop(0, 'red');
     	grad.addColorStop(1/6, 'orange');
@@ -243,20 +245,16 @@ function draw(frame) {
 		currentZ = a.touchDistance; 
 		
 		var gestures = frame.gestures;
-		//var star = new Image();
-		//star.src = "orange.gif";
 		
-		//ctx.save();
-		
+		//process an array of gestures received from Leap Motion
 		if (gestures.length > 0) {
 			for (var i = 0; i < gestures.length; i++) {
             	var gesture = gestures[i];
 				console.log("TYPE: " + gesture.type);
-				// behavior for screen tap- play one note; display picture
+				// behavior for screen tap or key tap - play one note; display picture
 				if (gesture.type == "screenTap"||gesture.type == "keyTap"){
 					console.log("TAP: " + currentY);
 					ctx.beginPath();
-					//ctx.arc(currentX,-currentY,8,0,2*Math.PI);
 					var star = new Image();
 					if (currentY >= 0 && currentY <100) star.src = "purple.gif";
 					if (currentY >= 100 && currentY <200) star.src = "aqua.gif";
@@ -265,47 +263,34 @@ function draw(frame) {
 					if (currentY >= 400 && currentY <500) star.src = "orange.gif";
 					if (currentY >= 500 && currentY <600) star.src = "pink.gif";
 					
-					// for safari:
-					// ctx.drawImage(star, currentX, -currentY);
-					// for chrome&safari:
-					//ctx.translate(ctx.width / 2, ctx.height / 2);
-					
+					//attempt at rotating - abandoned this approach
+					//because we have to rotate canvas - messes up coordinates	
+									
 					//var degree = Math.floor(Math.random()*180);
 					//ctx.rotate(degree*Math.PI/180);
 					
 					star.onload = function() {
 					    ctx.drawImage(star, currentX, -currentY);
 					}
-					
 					ctx.stroke();
-					//ctx.restore();
-					//ctx.rotate(-degree*Math.PI/180);
-					
 					playNote(currentY);
 					
+					//have to make local copies of currentX,Y because these variables are defined outside the for loop
 					var localCurX = currentX;
 					var localCurY = currentY;
+					//console.log("run!");
 					
-					//redrawing a black image on top of the stars
-					//but for some reason this does not cover all the stars :(
-					console.log("run!");
+					//fading function - draws a black image on top of every star
 					setTimeout(function(){
 						var black = new Image();
 						ctx.beginPath();
 						
-						
 						black.src = "black-1.gif";
-						// for safari:
-						// ctx.drawImage(black,currentX,-currentY);
-						// for chrome&safari:
-						// ctx.rotate(degree*Math.PI/180);
 						black.onload = function() {
 							ctx.drawImage(black, localCurX, -localCurY);
 						}
-						console.log("clear image");
+						//console.log("clear image");
 						ctx.stroke();
-						//ctx.rotate(-degree*Math.PI/180);
-						//ctx.restore();
 					}, 1000);
 					
 					}
@@ -348,6 +333,7 @@ function drawLine(x1,y1,x2,y2){ //old, old, new, new
 	setTimeout(function(){blackLine(x1,y1,x2,y2)}, 2000);
 }
 
+//fading lines - not using this
 function blackLine(x1,y1,x2,y2){
 	var grad= ctx.createLinearGradient(0, -500, 0, 0);
 	grad.addColorStop(0, 'black');
@@ -358,7 +344,6 @@ function blackLine(x1,y1,x2,y2){
 	ctx.lineWidth = 7;
 	ctx.stroke();
 }
-
 
 
 // loop function- gets frame data from leap motion. 
